@@ -2,18 +2,9 @@
 
 Three BPMN 2.0 process models built with **Camunda Desktop Modeler**, one per scenario. Each `.bpmn` file can be opened directly in Camunda Modeler for review or editing.
 
-## Repository structure
 
-```
-.
-├── README.md
-└── diagrams/
-    ├── leave-approval.bpmn
-    ├── purchase-order.bpmn
-    └── it-service-request.bpmn
-```
 
-*(Export each diagram as a PNG/SVG from Modeler via File → Export As Image and drop them alongside the `.bpmn` files if your submission format requires images too — see note at the bottom.)*
+
 
 ---
 
