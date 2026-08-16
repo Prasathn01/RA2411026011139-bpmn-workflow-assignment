@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_PurchaseOrder" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Claude" exporterVersion="1.0">
+  <bpmn:process id="Process_PurchaseOrder" name="Online Purchase Order Processing" isExecutable="false">
+    <bpmn:startEvent id="StartEvent_1" name="Customer Places Order">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Task_CheckAvailability" name="Check Product Availability">
+      <bpmn:incoming>Flow_1</bpmn:incoming>
+      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_Availability" name="Product Available?">
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+      <bpmn:outgoing>Flow_3_No</bpmn:outgoing>
+      <bpmn:outgoing>Flow_4_Yes</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="Task_NotifyOutOfStock" name="Notify Customer - Out of Stock">
+      <bpmn:incoming>Flow_3_No</bpmn:incoming>
+      <bpmn:outgoing>Flow_5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="EndEvent_OutOfStock" name="Order Cancelled - Out of Stock">
+      <bpmn:incoming>Flow_5</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="Task_ProcessPayment" name="Process Payment">
+      <bpmn:incoming>Flow_4_Yes</bpmn:incoming>
+      <bpmn:outgoing>Flow_6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_PaymentCheck" name="Payment Successful?">
+      <bpmn:incoming>Flow_6</bpmn:incoming>
+      <bpmn:outgoing>Flow_7_No</bpmn:outgoing>
+      <bpmn:outgoing>Flow_8_Yes</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="Task_NotifyPaymentFailure" name="Notify Customer - Payment Failed">
+      <bpmn:incoming>Flow_7_No</bpmn:incoming>
+      <bpmn:outgoing>Flow_9</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="EndEvent_PaymentFailed" name="Order Cancelled - Payment Failed">
+      <bpmn:incoming>Flow_9</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="Task_ConfirmOrder" name="Confirm Order">
+      <bpmn:incoming>Flow_8_Yes</bpmn:incoming>
+      <bpmn:outgoing>Flow_10</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Task_PrepareShipment" name="Prepare Product for Shipment">
+      <bpmn:incoming>Flow_10</bpmn:incoming>
+      <bpmn:outgoing>Flow_11</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Task_ShipOrder" name="Ship Order">
+      <bpmn:incoming>Flow_11</bpmn:incoming>
+      <bpmn:outgoing>Flow_12</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Task_ShippingConfirmation" name="Send Shipping Confirmation">
+      <bpmn:incoming>Flow_12</bpmn:incoming>
+      <bpmn:outgoing>Flow_13</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="EndEvent_Completed" name="Order Completed">
+      <bpmn:incoming>Flow_13</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_1" targetRef="Task_CheckAvailability" />
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_CheckAvailability" targetRef="Gateway_Availability" />
+    <bpmn:sequenceFlow id="Flow_3_No" name="No" sourceRef="Gateway_Availability" targetRef="Task_NotifyOutOfStock" />
+    <bpmn:sequenceFlow id="Flow_4_Yes" name="Yes" sourceRef="Gateway_Availability" targetRef="Task_ProcessPayment" />
+    <bpmn:sequenceFlow id="Flow_5" sourceRef="Task_NotifyOutOfStock" targetRef="EndEvent_OutOfStock" />
+    <bpmn:sequenceFlow id="Flow_6" sourceRef="Task_ProcessPayment" targetRef="Gateway_PaymentCheck" />
+    <bpmn:sequenceFlow id="Flow_7_No" name="No" sourceRef="Gateway_PaymentCheck" targetRef="Task_NotifyPaymentFailure" />
+    <bpmn:sequenceFlow id="Flow_8_Yes" name="Yes" sourceRef="Gateway_PaymentCheck" targetRef="Task_ConfirmOrder" />
+    <bpmn:sequenceFlow id="Flow_9" sourceRef="Task_NotifyPaymentFailure" targetRef="EndEvent_PaymentFailed" />
+    <bpmn:sequenceFlow id="Flow_10" sourceRef="Task_ConfirmOrder" targetRef="Task_PrepareShipment" />
+    <bpmn:sequenceFlow id="Flow_11" sourceRef="Task_PrepareShipment" targetRef="Task_ShipOrder" />
+    <bpmn:sequenceFlow id="Flow_12" sourceRef="Task_ShipOrder" targetRef="Task_ShippingConfirmation" />
+    <bpmn:sequenceFlow id="Flow_13" sourceRef="Task_ShippingConfirmation" targetRef="EndEvent_Completed" />
+  </bpmn:process>
+
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_PurchaseOrder">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="130" y="225" width="80" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CheckAvailability_di" bpmnElement="Task_CheckAvailability">
+        <dc:Bounds x="240" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Availability_di" bpmnElement="Gateway_Availability" isMarkerVisible="true">
+        <dc:Bounds x="400" y="175" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="378" y="232" width="94" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_NotifyOutOfStock_di" bpmnElement="Task_NotifyOutOfStock">
+        <dc:Bounds x="375" y="320" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_OutOfStock_di" bpmnElement="EndEvent_OutOfStock">
+        <dc:Bounds x="545" y="342" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="515" y="385" width="96" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ProcessPayment_di" bpmnElement="Task_ProcessPayment">
+        <dc:Bounds x="500" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_PaymentCheck_di" bpmnElement="Gateway_PaymentCheck" isMarkerVisible="true">
+        <dc:Bounds x="660" y="175" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="638" y="232" width="94" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_NotifyPaymentFailure_di" bpmnElement="Task_NotifyPaymentFailure">
+        <dc:Bounds x="635" y="320" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_PaymentFailed_di" bpmnElement="EndEvent_PaymentFailed">
+        <dc:Bounds x="805" y="342" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="775" y="385" width="96" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ConfirmOrder_di" bpmnElement="Task_ConfirmOrder">
+        <dc:Bounds x="760" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_PrepareShipment_di" bpmnElement="Task_PrepareShipment">
+        <dc:Bounds x="910" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ShipOrder_di" bpmnElement="Task_ShipOrder">
+        <dc:Bounds x="1060" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ShippingConfirmation_di" bpmnElement="Task_ShippingConfirmation">
+        <dc:Bounds x="1210" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_Completed_di" bpmnElement="EndEvent_Completed">
+        <dc:Bounds x="1360" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1340" y="225" width="80" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+        <di:waypoint x="188" y="200" /><di:waypoint x="240" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+        <di:waypoint x="340" y="200" /><di:waypoint x="400" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_3_No_di" bpmnElement="Flow_3_No">
+        <di:waypoint x="425" y="225" /><di:waypoint x="425" y="320" />
+        <bpmndi:BPMNLabel><dc:Bounds x="431" y="270" width="20" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_4_Yes_di" bpmnElement="Flow_4_Yes">
+        <di:waypoint x="450" y="200" /><di:waypoint x="500" y="200" />
+        <bpmndi:BPMNLabel><dc:Bounds x="465" y="182" width="24" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_5_di" bpmnElement="Flow_5">
+        <di:waypoint x="475" y="360" /><di:waypoint x="545" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_6_di" bpmnElement="Flow_6">
+        <di:waypoint x="600" y="200" /><di:waypoint x="660" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_7_No_di" bpmnElement="Flow_7_No">
+        <di:waypoint x="685" y="225" /><di:waypoint x="685" y="320" />
+        <bpmndi:BPMNLabel><dc:Bounds x="691" y="270" width="20" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_8_Yes_di" bpmnElement="Flow_8_Yes">
+        <di:waypoint x="710" y="200" /><di:waypoint x="760" y="200" />
+        <bpmndi:BPMNLabel><dc:Bounds x="725" y="182" width="24" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_9_di" bpmnElement="Flow_9">
+        <di:waypoint x="735" y="360" /><di:waypoint x="805" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10_di" bpmnElement="Flow_10">
+        <di:waypoint x="860" y="200" /><di:waypoint x="910" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11_di" bpmnElement="Flow_11">
+        <di:waypoint x="1010" y="200" /><di:waypoint x="1060" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12_di" bpmnElement="Flow_12">
+        <di:waypoint x="1160" y="200" /><di:waypoint x="1210" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13_di" bpmnElement="Flow_13">
+        <di:waypoint x="1310" y="200" /><di:waypoint x="1360" y="200" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

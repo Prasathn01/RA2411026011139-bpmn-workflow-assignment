@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_LeaveApproval" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Claude" exporterVersion="1.0">
+  <bpmn:process id="Process_LeaveApproval" name="Employee Leave Approval" isExecutable="false">
+    <bpmn:startEvent id="StartEvent_1" name="Employee Submits Leave Request">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Task_CheckBalance" name="Check Leave Balance">
+      <bpmn:incoming>Flow_1</bpmn:incoming>
+      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_BalanceCheck" name="Balance Sufficient?">
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+      <bpmn:outgoing>Flow_3_No</bpmn:outgoing>
+      <bpmn:outgoing>Flow_4_Yes</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="Task_InsufficientNotif" name="Send Insufficient-Balance Notification">
+      <bpmn:incoming>Flow_3_No</bpmn:incoming>
+      <bpmn:outgoing>Flow_5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="EndEvent_Insufficient" name="Insufficient Balance">
+      <bpmn:incoming>Flow_5</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="Task_SendManager" name="Send to Manager for Approval">
+      <bpmn:incoming>Flow_4_Yes</bpmn:incoming>
+      <bpmn:outgoing>Flow_6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_ManagerApproval" name="Manager Approves?">
+      <bpmn:incoming>Flow_6</bpmn:incoming>
+      <bpmn:outgoing>Flow_7_Yes</bpmn:outgoing>
+      <bpmn:outgoing>Flow_8_No</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="Task_UpdateBalance" name="Update Leave Balance">
+      <bpmn:incoming>Flow_7_Yes</bpmn:incoming>
+      <bpmn:outgoing>Flow_9</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Task_ApprovalNotif" name="Send Approval Notification">
+      <bpmn:incoming>Flow_9</bpmn:incoming>
+      <bpmn:outgoing>Flow_10</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="EndEvent_Approved" name="Leave Approved">
+      <bpmn:incoming>Flow_10</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="Task_RejectionNotif" name="Send Rejection Notification">
+      <bpmn:incoming>Flow_8_No</bpmn:incoming>
+      <bpmn:outgoing>Flow_11</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="EndEvent_Rejected" name="Leave Rejected">
+      <bpmn:incoming>Flow_11</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_1" targetRef="Task_CheckBalance" />
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_CheckBalance" targetRef="Gateway_BalanceCheck" />
+    <bpmn:sequenceFlow id="Flow_3_No" name="No" sourceRef="Gateway_BalanceCheck" targetRef="Task_InsufficientNotif" />
+    <bpmn:sequenceFlow id="Flow_4_Yes" name="Yes" sourceRef="Gateway_BalanceCheck" targetRef="Task_SendManager" />
+    <bpmn:sequenceFlow id="Flow_5" sourceRef="Task_InsufficientNotif" targetRef="EndEvent_Insufficient" />
+    <bpmn:sequenceFlow id="Flow_6" sourceRef="Task_SendManager" targetRef="Gateway_ManagerApproval" />
+    <bpmn:sequenceFlow id="Flow_7_Yes" name="Yes" sourceRef="Gateway_ManagerApproval" targetRef="Task_UpdateBalance" />
+    <bpmn:sequenceFlow id="Flow_8_No" name="No" sourceRef="Gateway_ManagerApproval" targetRef="Task_RejectionNotif" />
+    <bpmn:sequenceFlow id="Flow_9" sourceRef="Task_UpdateBalance" targetRef="Task_ApprovalNotif" />
+    <bpmn:sequenceFlow id="Flow_10" sourceRef="Task_ApprovalNotif" targetRef="EndEvent_Approved" />
+    <bpmn:sequenceFlow id="Flow_11" sourceRef="Task_RejectionNotif" targetRef="EndEvent_Rejected" />
+  </bpmn:process>
+
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_LeaveApproval">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="130" y="225" width="80" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CheckBalance_di" bpmnElement="Task_CheckBalance">
+        <dc:Bounds x="240" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_BalanceCheck_di" bpmnElement="Gateway_BalanceCheck" isMarkerVisible="true">
+        <dc:Bounds x="400" y="175" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="378" y="232" width="94" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_SendManager_di" bpmnElement="Task_SendManager">
+        <dc:Bounds x="500" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_ManagerApproval_di" bpmnElement="Gateway_ManagerApproval" isMarkerVisible="true">
+        <dc:Bounds x="660" y="175" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="638" y="232" width="94" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_UpdateBalance_di" bpmnElement="Task_UpdateBalance">
+        <dc:Bounds x="760" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ApprovalNotif_di" bpmnElement="Task_ApprovalNotif">
+        <dc:Bounds x="910" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_Approved_di" bpmnElement="EndEvent_Approved">
+        <dc:Bounds x="1060" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1038" y="225" width="80" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_InsufficientNotif_di" bpmnElement="Task_InsufficientNotif">
+        <dc:Bounds x="375" y="320" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_Insufficient_di" bpmnElement="EndEvent_Insufficient">
+        <dc:Bounds x="545" y="342" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="518" y="385" width="90" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_RejectionNotif_di" bpmnElement="Task_RejectionNotif">
+        <dc:Bounds x="635" y="320" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_Rejected_di" bpmnElement="EndEvent_Rejected">
+        <dc:Bounds x="805" y="342" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="783" y="385" width="80" height="27" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+        <di:waypoint x="188" y="200" /><di:waypoint x="240" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+        <di:waypoint x="340" y="200" /><di:waypoint x="400" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_3_No_di" bpmnElement="Flow_3_No">
+        <di:waypoint x="425" y="225" /><di:waypoint x="425" y="320" />
+        <bpmndi:BPMNLabel><dc:Bounds x="431" y="270" width="20" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_4_Yes_di" bpmnElement="Flow_4_Yes">
+        <di:waypoint x="450" y="200" /><di:waypoint x="500" y="200" />
+        <bpmndi:BPMNLabel><dc:Bounds x="465" y="182" width="24" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_5_di" bpmnElement="Flow_5">
+        <di:waypoint x="475" y="360" /><di:waypoint x="545" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_6_di" bpmnElement="Flow_6">
+        <di:waypoint x="600" y="200" /><di:waypoint x="660" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_7_Yes_di" bpmnElement="Flow_7_Yes">
+        <di:waypoint x="710" y="200" /><di:waypoint x="760" y="200" />
+        <bpmndi:BPMNLabel><dc:Bounds x="725" y="182" width="24" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_8_No_di" bpmnElement="Flow_8_No">
+        <di:waypoint x="685" y="225" /><di:waypoint x="685" y="320" />
+        <bpmndi:BPMNLabel><dc:Bounds x="691" y="270" width="20" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_9_di" bpmnElement="Flow_9">
+        <di:waypoint x="860" y="200" /><di:waypoint x="910" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10_di" bpmnElement="Flow_10">
+        <di:waypoint x="1010" y="200" /><di:waypoint x="1060" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11_di" bpmnElement="Flow_11">
+        <di:waypoint x="735" y="360" /><di:waypoint x="805" y="360" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
